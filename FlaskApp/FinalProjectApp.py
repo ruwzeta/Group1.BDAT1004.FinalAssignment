@@ -43,6 +43,26 @@ def allsongs():
 def html_table():
     return render_template('data.html',  tables=[df_from_mongo.to_html(classes='data')], titles=df_from_mongo.columns.values)
 
+@app.route('/members')
+def html_members():
+    return render_template('members.html')
+
+@app.route('/duration')
+def html_duration():
+    return render_template('duration.html')
+
+@app.route('/songpop')
+def html_songpop():
+    return render_template('songpop.html')
+
+@app.route('/topartists')
+def html_topartists():
+    return render_template('topartists.html')
+
+@app.route('/topgenres')
+def html_topgenres():
+    return render_template('topgenres.html')
+
 @app.route('/api/v1/songs/name',methods=['GET'])
 def getsongbyname():
     myquery = { "artists": "Taylor Swift" }

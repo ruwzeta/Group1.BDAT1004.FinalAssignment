@@ -2,12 +2,16 @@ from flask import Flask, jsonify, request, render_template,Response
 from pymongo import MongoClient
 import pandas as pd
 import json
+from flask_charts import GoogleCharts
+from markupsafe import Markup
+from flask_charts import Chart
 
 # from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelationship
 # from flask_rest_jsonapi.exceptions import ObjectNotFound
 
 
 app = Flask(__name__)
+charts = GoogleCharts(app)
 df = pd.read_csv('../track_info4.csv')
 df.assign(Genres=df.genres.str.split(","))
 df['duration_min']= df['duration_ms'] / (1000*60)
@@ -58,16 +62,30 @@ def html_songpop():
     tracks_name_df.rename(columns = {'track_name':'counts'},inplace=True)
     tracks_name_df['track_name'] = tracks_name_df.index
 
-    temps = tracks_name_df[['track_name','counts']]
-    temps['track_name'] = temps['track_name'].astype(str)
-    
-    d = temps.values.tolist()
-    c = temps.columns.tolist()
-    d.insert(0,c)
+    # temps = tracks_name_df[['track_name','counts']]
+    # temps['track_name'] = temps['track_name'].astype(str)
 
-    tempdata = json.dumps({'title':title,'data':d})
+    song_pop_chart = Chart("BarChart", "songpop")
+    song_pop_chart.options = {
+                            "title": "Song Popularity",
+                            "is3D": False,
+                            "width": 500,
+                            "height": 500
+                        }
+    song_pop_chart.data.add_column("string", "SongTitle")
+    song_pop_chart.data.add_column("number", "Count")
+    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[0],200])
+    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[1],300])
+    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[2],450])
+    song_pop_chart.add_event_listener("select", "my_function")
+    song_pop_chart.refresh = 1000
+    # d = temps.values.tolist()
+    # c = temps.columns.tolist()
+    # d.insert(0,c)
+
+    # tempdata = json.dumps({'title':title,'data':d})
     
-    return render_template('songpop.html',tempdata = tempdata)
+    return render_template('songpop.html',song_pop_chart = song_pop_chart)
 
 @app.route('/topartists')
 def html_topartists():

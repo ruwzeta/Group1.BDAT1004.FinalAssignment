@@ -2,13 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Title</title>
 </head>
 <body>
-
+    <body style="background-color: rgba(250, 246, 246, 0.877)">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #1DB954">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">BDAT 1004: Group 1 Final project</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" href="members">Team Members</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" href="datatable">Data Table</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Charts & Analysis
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="songpop">Song Popularity</a></li>
+                      <li><a class="dropdown-item" href="topartists">Top 10 Artists</a></li>
+                      <!-- <li><hr class="dropdown-divider"></li> -->
+                      <li><a class="dropdown-item" href="topgenres">Top 10 Genres</a></li>
+                      <li><a class="dropdown-item" href="duration">Song Duration</a></li>
+                    </ul>
+                  </li>
+                  <!-- </li>
+                  <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                  </li>
+                </ul>
+                <form class="d-flex">
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form> -->
+              </div>
+            </div>
+          </nav>
+        </div>
+        <p> 
+  
+                                    
+        </p>
+        <div class = "container">
+          <h3 style="color:#1DB954">Data Table</h3>
+          <h5 style="color:rgb(0, 0, 0)">This page will look at the data within our database. </h5>
+          <h6 style="color:rgb(56, 55, 55)">Note: this page will take a while to load. </h6>
+        </div>
+        <p> 
+    
+                                      
+        </p>
 {% for table in tables %}
             {{titles[loop.index]}}
             {{ table|safe }}
 {% endfor %}
+
+ <!-- Option 1: Bootstrap Bundle with Popper -->
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -12,12 +12,14 @@ app = Flask(__name__)
 # df2 = df.assign(Genres=df.genres.str.split(",")).explode('Genres')
 # data = df.to_dict(orient = "records")
 
+# MongDB Connection
 client = MongoClient("mongodb://YCH:MON2022@ac-v9dvncc-shard-00-00.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-01.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-02.6n9k6sk.mongodb.net:27017/?ssl=true&replicaSet=atlas-gpgpqo-shard-0&authSource=admin&retryWrites=true&w=majority")
-db = client.BDAT1004_Final
+db = client.BDAT1004_Final2
 
 spotify_db = db.SongData
 #spotify_db.insert_many(data)
 
+# Retrieve Data from MongoDB (All data)
 cursor=spotify_db.find()
 list_cur = list(cursor)
 df_from_mongo = pd.DataFrame(list_cur)

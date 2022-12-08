@@ -39,6 +39,9 @@ def allsongs():
     songs = spotify_db.find({}, {'_id': 0})
     return jsonify(list(songs))
 
+@app.route('/datatable', methods=("POST", "GET"))
+def html_table():
+    return render_template('data.html',  tables=[df_from_mongo.to_html(classes='data')], titles=df_from_mongo.columns.values)
 
 @app.route('/api/v1/songs/name',methods=['GET'])
 def getsongbyname():

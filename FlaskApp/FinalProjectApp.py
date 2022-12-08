@@ -22,8 +22,9 @@ db = client.FlaskApp1004
 spotify_db = db.Spotify
 spotify_db.insert_many(data)
 
-# cursor=spotify_db.find()
-# docs=list(cursor)
+cursor=spotify_db.find()
+list_cur = list(cursor)
+df_from_mongo = pd.DataFrame(list_cur)
 
 
 @app.route('/')
@@ -31,10 +32,23 @@ def index():
     return render_template('index.html')
 
 
-# @app.route('/allsongs',methods=['GET'])
-# def allsongs():
-#     return jsonify(docs)
+@app.route('/api/v1/songs/all',methods=['GET'])
+def allsongs():
+    songs = spotify_db.find({}, {'_id': 0})
+    return jsonify(list(songs))
 
+
+@app.route('/api/v1/songs/name',methods=['GET'])
+def getsongbyname():
+    myquery = { "artists": "Taylor Swift" }
+    songs_name = spotify_db.find(myquery,{'_id': 0})
+    return jsonify(list(songs_name))
+
+@app.route('/api/v1/songs/id',methods=['GET'])
+def getsongbyid():
+    myquery = { "song_id": "3eX0NZfLtGzoLUxPNvRfqm" }
+    songs_id = spotify_db.find(myquery,{'_id': 0})
+    return jsonify(list(songs_id))
 
 if __name__ == "__main__":
     app.run()

@@ -19,13 +19,15 @@ data = df.to_dict(orient = "records")
 client = MongoClient("mongodb://YCH:MON2022@ac-v9dvncc-shard-00-00.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-01.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-02.6n9k6sk.mongodb.net:27017/?ssl=true&replicaSet=atlas-gpgpqo-shard-0&authSource=admin&retryWrites=true&w=majority")
 db = client.FlaskApp1004
 
-
 spotify_db = db.Spotify
 #spotify_db.insert_many(data)
 
 cursor=spotify_db.find()
 list_cur = list(cursor)
 df_from_mongo = pd.DataFrame(list_cur)
+
+
+
 
 @app.route('/')
 def index():
@@ -51,8 +53,21 @@ def html_duration():
 
 @app.route('/songpop')
 def html_songpop():
+    title = "Song Popularity"
+    tracks_name_df = pd.DataFrame(df_from_mongo["track_name"].value_counts())
+    tracks_name_df.rename(columns = {'track_name':'counts'},inplace=True)
+    tracks_name_df['track_name'] = tracks_name_df.index
+
+    temps = tracks_name_df[['track_name','counts']]
+    temps['track_name'] = temps['track_name'].astype(str)
     
-    return render_template('songpop.html')
+    d = temps.values.tolist()
+    c = temps.columns.tolist()
+    d.insert(0,c)
+
+    tempdata = json.dumps({'title':title,'data':d})
+    
+    return render_template('songpop.html',tempdata = tempdata)
 
 @app.route('/topartists')
 def html_topartists():

@@ -2,19 +2,19 @@ from flask import Flask, jsonify, request, render_template,Response
 from pymongo import MongoClient
 import pandas as pd
 import json
-from flask_charts import GoogleCharts
-from markupsafe import Markup
-from flask_charts import Chart
+# from flask_charts import GoogleCharts
+# from markupsafe import Markup
+# from flask_charts import Chart
 
 # from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelationship
 # from flask_rest_jsonapi.exceptions import ObjectNotFound
 
 
 app = Flask(__name__)
-charts = GoogleCharts(app)
-df = pd.read_csv('../track_info4.csv')
-df.assign(Genres=df.genres.str.split(","))
-df['duration_min']= df['duration_ms'] / (1000*60)
+# charts = GoogleCharts(app)
+# df = pd.read_csv('../track_info4.csv')
+# df.assign(Genres=df.genres.str.split(","))
+# df['duration_min']= df['duration_ms'] / (1000*60)
 
 # df2 = df.assign(Genres=df.genres.str.split(",")).explode('Genres')
 

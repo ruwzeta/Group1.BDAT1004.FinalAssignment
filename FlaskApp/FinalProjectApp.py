@@ -2,13 +2,6 @@ from flask import Flask, jsonify, request, render_template,Response
 from pymongo import MongoClient
 import pandas as pd
 import json
-# from flask_charts import GoogleCharts
-# from markupsafe import Markup
-# from flask_charts import Chart
-
-# from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelationship
-# from flask_rest_jsonapi.exceptions import ObjectNotFound
-
 
 app = Flask(__name__)
 # charts = GoogleCharts(app)
@@ -21,16 +14,14 @@ app = Flask(__name__)
 # data = df.to_dict(orient = "records")
 
 client = MongoClient("mongodb://YCH:MON2022@ac-v9dvncc-shard-00-00.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-01.6n9k6sk.mongodb.net:27017,ac-v9dvncc-shard-00-02.6n9k6sk.mongodb.net:27017/?ssl=true&replicaSet=atlas-gpgpqo-shard-0&authSource=admin&retryWrites=true&w=majority")
-db = client.FlaskApp1004
+db = client.BDAT1004_Final
 
-spotify_db = db.Spotify
+spotify_db = db.SongData
 #spotify_db.insert_many(data)
 
 cursor=spotify_db.find()
 list_cur = list(cursor)
 df_from_mongo = pd.DataFrame(list_cur)
-
-
 
 
 @app.route('/')
@@ -40,7 +31,7 @@ def index():
 
 @app.route('/api/v1/songs/all',methods=['GET'])
 def allsongs():
-    songs = spotify_db.find({}, {'_id': 0})
+    songs = spotify_db.find([], {'_id': 0})
     return jsonify(list(songs))
 
 @app.route('/datatable', methods=("POST", "GET"))
@@ -53,11 +44,18 @@ def html_members():
 
 @app.route('/duration')
 def html_duration():
-    return render_template('duration.html')
+
+    temps = df_from_mongo[['duration_min','popularity']]
+    d = temps.values.tolist()
+    c = temps.columns.tolist()
+    d.insert(0,c)
+
+    tempdata = json.dumps({'data':d})
+
+    return render_template('duration.html',tempdata = tempdata)
 
 @app.route('/songpop')
 def html_songpop():
-    title = "Song Popularity"
     tracks_name_df = pd.DataFrame(df_from_mongo["track_name"].value_counts())
     tracks_name_df.rename(columns = {'track_name':'counts'},inplace=True)
     tracks_name_df['track_name'] = tracks_name_df.index
@@ -73,25 +71,55 @@ def html_songpop():
 
 @app.route('/topartists')
 def html_topartists():
-    return render_template('topartists.html')
+    
+    df2 = df_from_mongo.assign(Artists=df_from_mongo['artists'].str.split(",")).explode('artists')
+    df2["id"] = df2.index + 1
+    artists_count = df2.groupby(["artists"]).count()
+    artists_count['count'] = artists_count.id
+    artists_count['Artists'] = artists_count.index
+    artists_count['Artists'] = artists_count['Artists'].str.replace(" ", "")
+
+    temps = artists_count[['Artists','count']].sort_values(['count'],ascending=False).head(10)
+    temps['Artists'] = temps['Artists'].astype(str)
+    d = temps.values.tolist()
+    c = temps.columns.tolist()
+    d.insert(0,c)
+
+    tempdata = json.dumps({'data':d})
+    return render_template('topartists.html',tempdata = tempdata)
 
 @app.route('/topgenres')
 def html_topgenres():
-    return render_template('topgenres.html')
+
+    df2 = df_from_mongo.assign(Genres=df_from_mongo['genres'].str.split(",")).explode('Genres')
+    df2["id"] = df2.index + 1
+    genres_count = df2.groupby(["Genres"]).count()
+    genres_count['count'] = genres_count.id
+    genres_count['Genres'] = genres_count.index
+    genres_count['Genres'] = genres_count['Genres'].str.replace(" ", "")
+
+    temps = genres_count[['Genres','count']].sort_values(['count'],ascending=False).head(10)
+    temps['Genres'] = temps['Genres'].astype(str)
+    d = temps.values.tolist()
+    c = temps.columns.tolist()
+    d.insert(0,c)
+
+    tempdata = json.dumps({'data':d})
+    return render_template('topgenres.html',tempdata = tempdata)
 
 @app.route('/api/v1/songs/name',methods=['GET'])
 def getsongbyname():
     args = request.args
     name = args.get('name')
-    myquery = { "artists": "Taylor Swift" }
+    myquery = { "artists": name }
     songs_name = spotify_db.find(myquery,{'_id': 0})
     return jsonify(list(songs_name))
 
 @app.route('/api/v1/songs/id',methods=['GET'])
 def getsongbyid():
     args = request.args
-    name = args.get('name')
-    myquery = { "song_id": "3eX0NZfLtGzoLUxPNvRfqm" }
+    id = args.get('id')
+    myquery = { "song_id": id }
     songs_id = spotify_db.find(myquery,{'_id': 0})
     return jsonify(list(songs_id))
 

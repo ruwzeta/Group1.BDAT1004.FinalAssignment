@@ -61,31 +61,15 @@ def html_songpop():
     tracks_name_df = pd.DataFrame(df_from_mongo["track_name"].value_counts())
     tracks_name_df.rename(columns = {'track_name':'counts'},inplace=True)
     tracks_name_df['track_name'] = tracks_name_df.index
+    temps = tracks_name_df[['track_name','counts']]
+    temps['track_name'] = temps['track_name'].astype(str)
+    d = temps.values.tolist()
+    c = temps.columns.tolist()
+    d.insert(0,c)
 
-    # temps = tracks_name_df[['track_name','counts']]
-    # temps['track_name'] = temps['track_name'].astype(str)
-
-    song_pop_chart = Chart("BarChart", "songpop")
-    song_pop_chart.options = {
-                            "title": "Song Popularity",
-                            "is3D": False,
-                            "width": 500,
-                            "height": 500
-                        }
-    song_pop_chart.data.add_column("string", "SongTitle")
-    song_pop_chart.data.add_column("number", "Count")
-    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[0],200])
-    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[1],300])
-    song_pop_chart.data.add_row([tracks_name_df['track_name'].iloc[2],450])
-    song_pop_chart.add_event_listener("select", "my_function")
-    song_pop_chart.refresh = 1000
-    # d = temps.values.tolist()
-    # c = temps.columns.tolist()
-    # d.insert(0,c)
-
-    # tempdata = json.dumps({'title':title,'data':d})
+    tempdata = json.dumps({'data':d})
     
-    return render_template('songpop.html',song_pop_chart = song_pop_chart)
+    return render_template('songpop.html',tempdata = tempdata)
 
 @app.route('/topartists')
 def html_topartists():
